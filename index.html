@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Cereal Milk Moment</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+ 
+* { box-sizing: border-box; }
+ 
+.cm-wrap {
+  background: #fff;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 36px 28px 44px;
+  text-align: center;
+}
+ 
+.cm-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #7A8B82;
+  margin: 0 0 10px;
+}
+ 
+.cm-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1B3A2F;
+  line-height: 1.2;
+  margin: 0 0 8px;
+}
+ 
+.cm-sub {
+  font-size: 14px;
+  color: #7A8B82;
+  margin: 0 0 28px;
+  line-height: 1.55;
+}
+ 
+.cm-progress {
+  height: 3px;
+  background: #e0e8e4;
+  border-radius: 99px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+ 
+.cm-progress-bar {
+  height: 100%;
+  background: #1B3A2F;
+  border-radius: 99px;
+  transition: width .35s ease;
+}
+ 
+.cm-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 26px;
+}
+ 
+.cm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e0e8e4;
+  transition: background .3s;
+}
+ 
+.cm-dot.active { background: #1B3A2F; }
+.cm-dot.done   { background: #D4A04A; }
+ 
+.cm-question {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1B3A2F;
+  margin: 0 0 22px;
+  line-height: 1.35;
+  min-height: 50px;
+}
+ 
+.cm-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+ 
+.cm-option {
+  border: 1.5px solid #d0dbd6;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1B3A2F;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, transform .1s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  line-height: 1.35;
+  width: 100%;
+}
+ 
+.cm-option:hover  { border-color: #1B3A2F; background: #f0f5f2; }
+.cm-option:active { transform: scale(.98); }
+ 
+.cm-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+ 
+/* Result panel */
+.cm-result {
+  display: none;
+  animation: fadeUp .4s ease both;
+}
+ 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+.cm-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+ 
+.badge-social { background: #E8F5EE; color: #1B3A2F; }
+.badge-chill  { background: #EEE8F5; color: #3A2F5B; }
+ 
+.cm-result-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1B3A2F;
+  margin-bottom: 10px;
+}
+ 
+.cm-result-desc {
+  font-size: 14px;
+  color: #4A5D53;
+  line-height: 1.7;
+  margin: 0 auto 26px;
+  max-width: 400px;
+}
+ 
+.cm-cta {
+  display: inline-block;
+  background: #1B3A2F;
+  color: #fff;
+  border-radius: 12px;
+  padding: 15px 30px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: .02em;
+  transition: background .18s;
+}
+ 
+.cm-cta:hover { background: #2a5244; color: #fff; }
+ 
+.cm-restart {
+  display: block;
+  margin: 14px auto 0;
+  font-size: 13px;
+  color: #7A8B82;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-family: inherit;
+}
+ 
+.cm-restart:hover { color: #1B3A2F; }
+ 
+/* Responsive: shrink padding on very small screens */
+@media (max-width: 400px) {
+  .cm-wrap { padding: 28px 18px 36px; }
+  .cm-title { font-size: 20px; }
+  .cm-option { font-size: 14px; padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+ 
+<div class="cm-wrap">
+ 
+  <!-- Quiz panel -->
+  <div id="cm-quiz">
+    <p class="cm-eyebrow">Cereal Milk</p>
+    <h2 class="cm-title">Find Your Moment</h2>
+    <p class="cm-sub">Three quick questions to find your perfect Cereal Milk situation.</p>
+    <div class="cm-progress">
+      <div class="cm-progress-bar" id="cm-bar" style="width:0%"></div>
+    </div>
+    <div class="cm-dots">
+      <div class="cm-dot active" id="d0"></div>
+      <div class="cm-dot" id="d1"></div>
+      <div class="cm-dot" id="d2"></div>
+    </div>
+    <p class="cm-question" id="cm-q"></p>
+    <div class="cm-options" id="cm-opts"></div>
+  </div>
+ 
+  <!-- Result panel -->
+  <div class="cm-result" id="cm-result">
+    <span class="cm-badge" id="cm-badge"></span>
+    <div class="cm-result-title" id="cm-rtitle"></div>
+    <p class="cm-result-desc" id="cm-rdesc"></p>
+    <a href="https://mood.com/product/cereal-milk"
+       class="cm-cta"
+       target="_blank"
+       rel="noopener noreferrer">
+      Try Cereal Milk Pre-Roll &rarr;
+    </a>
+    <button class="cm-restart" id="cm-restart">Start over</button>
+  </div>
+ 
+</div>
+ 
+<script>
+(function () {
+ 
+  var questions = [
+    {
+      q: "What does your ideal evening look like?",
+      opts: [
+        { icon: "🥂", label: "Friends, laughs, good energy", val: "social" },
+        { icon: "🛋️", label: "Quiet, slow, just unwinding",  val: "chill"  }
+      ]
+    },
+    {
+      q: "Where's your head at right now?",
+      opts: [
+        { icon: "✨", label: "Buzzing -- ready to engage",       val: "social" },
+        { icon: "🌿", label: "Running low -- need to decompress", val: "chill"  }
+      ]
+    },
+    {
+      q: "What matters most in this moment?",
+      opts: [
+        { icon: "🎶", label: "Good vibes and conversation",  val: "social" },
+        { icon: "🌙", label: "Deep relaxation and rest",     val: "chill"  }
+      ]
+    }
+  ];
+ 
+  var results = {
+    social: {
+      badge:      "Your Moment: Social",
+      badgeClass: "badge-social",
+      title:      "Keep the energy light.",
+      desc:       "One or two puffs of Cereal Milk and you'll notice a clean cerebral lift -- thoughts get lighter, conversation flows easier. The limonene and caryophyllene shine at this amount, helping you feel present and genuinely good. Exactly where you want to be tonight."
+    },
+    chill: {
+      badge:      "Your Moment: Chill",
+      badgeClass: "badge-chill",
+      title:      "Let everything slow down.",
+      desc:       "A moderate amount of Cereal Milk eases muscle tension and quiets mental noise without putting you out. The warm body relaxation from the Y Life genetics settles in around 30 to 45 minutes. Perfect for the end of a long day when you just need to land."
+    }
+  };
+ 
+  var scores = { social: 0, chill: 0 };
+  var step   = 0;
+ 
+  function render() {
+    var q = questions[step];
+ 
+    document.getElementById("cm-q").textContent = q.q;
+ 
+    var container = document.getElementById("cm-opts");
+    container.innerHTML = "";
+ 
+    q.opts.forEach(function (o) {
+      var btn = document.createElement("button");
+      btn.className = "cm-option";
+      btn.setAttribute("type", "button");
+      btn.innerHTML =
+        '<span class="cm-icon">' + o.icon + '</span>' +
+        '<span>' + o.label + '</span>';
+      btn.addEventListener("click", function () { pick(o.val); });
+      container.appendChild(btn);
+    });
+ 
+    // Progress bar
+    var pct = Math.round((step / questions.length) * 100);
+    document.getElementById("cm-bar").style.width = pct + "%";
+ 
+    // Dots
+    for (var i = 0; i < 3; i++) {
+      var dot = document.getElementById("d" + i);
+      if (i < step)       dot.className = "cm-dot done";
+      else if (i === step) dot.className = "cm-dot active";
+      else                 dot.className = "cm-dot";
+    }
+ 
+    // Auto-resize iframe (Shopify postMessage)
+    postHeight();
+  }
+ 
+  function pick(val) {
+    scores[val]++;
+    step++;
+    if (step < questions.length) {
+      render();
+    } else {
+      showResult();
+    }
+  }
+ 
+  function showResult() {
+    document.getElementById("cm-bar").style.width = "100%";
+    document.getElementById("cm-quiz").style.display = "none";
+ 
+    var winner = scores.social >= scores.chill ? "social" : "chill";
+    var r      = results[winner];
+ 
+    var badge       = document.getElementById("cm-badge");
+    badge.textContent = r.badge;
+    badge.className   = "cm-badge " + r.badgeClass;
+ 
+    document.getElementById("cm-rtitle").textContent = r.title;
+    document.getElementById("cm-rdesc").textContent  = r.desc;
+ 
+    var panel = document.getElementById("cm-result");
+    panel.style.display = "block";
+ 
+    postHeight();
+  }
+ 
+  function reset() {
+    scores = { social: 0, chill: 0 };
+    step   = 0;
+    document.getElementById("cm-result").style.display = "none";
+    document.getElementById("cm-quiz").style.display   = "block";
+    render();
+  }
+ 
+  // postMessage auto-resize for Shopify iframe embedding
+  function postHeight() {
+    try {
+      var h = document.body.scrollHeight;
+      window.parent.postMessage({ type: "cm-resize", height: h }, "*");
+    } catch (e) {}
+  }
+ 
+  document.getElementById("cm-restart").addEventListener("click", reset);
+ 
+  // Kick off
+  render();
+ 
+})();
+</script>
+</body>
+</html>
